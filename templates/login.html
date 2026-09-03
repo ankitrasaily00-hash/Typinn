@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Log in to Typinn and continue improving your typing skills."
+    >
+
+    <title>
+        Login — Typinn
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- =========================
+         Header
+    ========================== -->
+
+    <header class="navbar">
+
+        <a
+            href="{{ url_for('home') }}"
+            class="logo"
+            aria-label="Typinn Home"
+        >
+            typ<span>inn</span>
+        </a>
+
+    </header>
+
+
+    <!-- =========================
+         Login
+    ========================== -->
+
+    <main class="auth-container">
+
+        <div class="auth-card">
+
+            <h1>
+                Welcome back
+            </h1>
+
+            <p>
+                Continue improving your typing skills.
+            </p>
+
+
+            <!-- =========================
+                 Flash Messages
+            ========================== -->
+
+            {% with messages = get_flashed_messages() %}
+
+                {% if messages %}
+
+                    <div class="flash-container">
+
+                        {% for message in messages %}
+
+                            <div
+                                class="flash-message"
+                                role="alert"
+                            >
+                                {{ message }}
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+            {% endwith %}
+
+
+            <!-- =========================
+                 Login Form
+            ========================== -->
+
+            <form
+                method="POST"
+                action="{{ url_for('login') }}"
+            >
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        maxlength="120"
+                        autocomplete="email"
+                        placeholder="you@example.com"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                        autocomplete="current-password"
+                        placeholder="Enter your password"
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="auth-btn"
+                >
+                    Login
+                </button>
+
+            </form>
+
+
+            <!-- =========================
+                 Registration Link
+            ========================== -->
+
+            <p class="auth-footer">
+
+                Don't have an account?
+
+                <a href="{{ url_for('register') }}">
+                    Create one
+                </a>
+
+            </p>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

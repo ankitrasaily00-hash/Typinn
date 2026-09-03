@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="Typinn — Improve your typing speed, accuracy and consistency."
+    >
+
+    <title>Typinn — Typing Practice</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <a
+        href="{{ url_for('home') }}"
+        class="logo"
+        aria-label="Typinn Home"
+    >
+        typ<span>inn</span>
+    </a>
+
+    <nav
+        class="nav-actions"
+        aria-label="Main navigation"
+    >
+
+        {% if current_user.is_authenticated %}
+
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('leaderboard') }}">
+                Leaderboard
+            </a>
+
+            <a
+                href="{{ url_for('logout') }}"
+                class="logout-btn"
+            >
+                Logout
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('login') }}">
+                Login
+            </a>
+
+            <a
+                href="{{ url_for('register') }}"
+                class="start-test-btn"
+            >
+                Get Started
+            </a>
+
+        {% endif %}
+
+    </nav>
+
+</header>
+
+
+<main class="container">
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="hero">
+
+        <h1>
+            Improve your typing.
+        </h1>
+
+        <p>
+            Practice your speed, accuracy and consistency.
+        </p>
+
+    </section>
+
+
+    <!-- =====================================================
+         TEST DURATION
+    ====================================================== -->
+
+    <section
+        class="controls"
+        aria-label="Typing test duration"
+    >
+
+        <div class="time-options">
+
+            <button
+                type="button"
+                class="time-btn active"
+                data-time="15"
+                aria-label="15 second typing test"
+            >
+                15s
+            </button>
+
+            <button
+                type="button"
+                class="time-btn"
+                data-time="30"
+                aria-label="30 second typing test"
+            >
+                30s
+            </button>
+
+            <button
+                type="button"
+                class="time-btn"
+                data-time="60"
+                aria-label="60 second typing test"
+            >
+                60s
+            </button>
+
+            <button
+                type="button"
+                class="time-btn"
+                data-time="120"
+                aria-label="120 second typing test"
+            >
+                120s
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         LIVE STATISTICS
+    ====================================================== -->
+
+    <section
+        class="stats"
+        aria-label="Live typing statistics"
+    >
+
+        <div class="stat">
+            <span class="label">Time</span>
+            <span id="time">15</span>
+        </div>
+
+        <div class="stat">
+            <span class="label">WPM</span>
+            <span id="wpm">0</span>
+        </div>
+
+        <div class="stat">
+            <span class="label">Accuracy</span>
+            <span id="accuracy">100%</span>
+        </div>
+
+        <div class="stat">
+            <span class="label">Errors</span>
+            <span id="errors">0</span>
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         TYPING AREA
+    ====================================================== -->
+
+    <section
+        class="typing-container"
+        id="typing-container"
+        tabindex="0"
+        role="textbox"
+        aria-label="Typing test area"
+        aria-multiline="true"
+    >
+
+        <div
+            id="text-display"
+            class="text-display"
+        ></div>
+
+
+        <!--
+            Hidden input.
+
+            The typing engine still uses this input internally.
+            It is intentionally invisible so the user sees only
+            the main typing area.
+        -->
+
+        <input
+            type="text"
+            id="typing-input"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            tabindex="-1"
+            aria-hidden="true"
+        >
+
+    
+
+    </section>
+
+
+    <!-- =====================================================
+         ACTIONS
+    ====================================================== -->
+
+    <div class="actions">
+
+        <button
+            type="button"
+            id="restartBtn"
+            class="restart-btn"
+        >
+            ↻ Restart
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         RESULT
+    ====================================================== -->
+
+    <section
+        id="result"
+        class="result hidden"
+        aria-live="polite"
+        aria-label="Typing test result"
+    >
+
+        <p class="result-title">
+            Test Complete
+        </p>
+
+
+        <div class="final-wpm">
+
+            <span id="finalWpm">
+                0
+            </span>
+
+            <small>
+                WPM
+            </small>
+
+        </div>
+
+
+        <div class="final-stats">
+
+            <div>
+                <span>Accuracy</span>
+                <strong id="finalAccuracy">0%</strong>
+            </div>
+
+            <div>
+                <span>Errors</span>
+                <strong id="finalErrors">0</strong>
+            </div>
+
+            <div>
+                <span>Characters</span>
+                <strong id="finalCharacters">0</strong>
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            id="tryAgainBtn"
+        >
+            Try Again
+        </button>
+
+    </section>
+
+</main>
+
+
+<!-- =====================================================
+     TYPING ENGINE
+====================================================== -->
+
+<script
+    src="{{ url_for('static', filename='js/typing.js') }}"
+></script>
+
+</body>
+
+</html>

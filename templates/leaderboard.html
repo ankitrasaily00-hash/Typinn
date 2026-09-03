@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Leaderboard — Typinn
+{% endblock %}
+
+{% block content %}
+
+<div class="leaderboard-container">
+
+    <!-- =========================
+         Leaderboard Header
+    ========================== -->
+
+    <section class="leaderboard-header">
+
+        <span class="eyebrow">
+            COMPETE
+        </span>
+
+        <h1>
+            Typinn Leaderboard
+        </h1>
+
+        <p>
+            See how your typing speed compares with other typists.
+        </p>
+
+    </section>
+
+
+    <!-- =========================
+         Leaderboard
+    ========================== -->
+
+    <section class="leaderboard-card">
+
+        {% if leaderboard %}
+
+            <div class="leaderboard-row leaderboard-head">
+
+                <span>
+                    Rank
+                </span>
+
+                <span>
+                    Typist
+                </span>
+
+                <span>
+                    Best WPM
+                </span>
+
+            </div>
+
+
+            {% for user in leaderboard %}
+
+                <div
+                    class="
+                        leaderboard-row
+                        {% if loop.index <= 3 %}
+                            top-rank
+                        {% endif %}
+                    "
+                >
+
+                    <span class="rank">
+
+                        {% if loop.index == 1 %}
+
+                            🥇
+
+                        {% elif loop.index == 2 %}
+
+                            🥈
+
+                        {% elif loop.index == 3 %}
+
+                            🥉
+
+                        {% else %}
+
+                            #{{ loop.index }}
+
+                        {% endif %}
+
+                    </span>
+
+
+                    <span class="username">
+
+                        {{ user.username }}
+
+                        {% if current_user.is_authenticated
+                              and user.username == current_user.username %}
+
+                            <small>
+                                You
+                            </small>
+
+                        {% endif %}
+
+                    </span>
+
+
+                    <strong class="leaderboard-wpm">
+
+                        {{ user.best_wpm }}
+
+                        <small>
+                            WPM
+                        </small>
+
+                    </strong>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="leaderboard-empty">
+
+                <h2>
+                    No scores yet
+                </h2>
+
+                <p>
+                    Complete a typing test to become the first typist
+                    on the leaderboard.
+                </p>
+
+                <a
+                    href="{{ url_for('home') }}"
+                    class="start-test-btn"
+                >
+                    Start Typing Test →
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+{% endblock %}

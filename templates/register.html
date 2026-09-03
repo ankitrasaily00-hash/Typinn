@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Create your Typinn account and start tracking your typing progress."
+    >
+
+    <title>
+        Create Account — Typinn
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- =========================
+         Header
+    ========================== -->
+
+    <header class="navbar">
+
+        <a
+            href="{{ url_for('home') }}"
+            class="logo"
+            aria-label="Typinn Home"
+        >
+            typ<span>inn</span>
+        </a>
+
+    </header>
+
+
+    <!-- =========================
+         Registration
+    ========================== -->
+
+    <main class="auth-container">
+
+        <div class="auth-card">
+
+            <h1>
+                Create your account
+            </h1>
+
+            <p>
+                Start tracking your typing progress.
+            </p>
+
+
+            <!-- =========================
+                 Flash Messages
+            ========================== -->
+
+            {% with messages = get_flashed_messages() %}
+
+                {% if messages %}
+
+                    <div class="flash-container">
+
+                        {% for message in messages %}
+
+                            <div
+                                class="flash-message"
+                                role="alert"
+                            >
+                                {{ message }}
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+            {% endwith %}
+
+
+            <!-- =========================
+                 Registration Form
+            ========================== -->
+
+            <form
+                method="POST"
+                action="{{ url_for('register') }}"
+            >
+
+                <div class="form-group">
+
+                    <label for="username">
+                        Username
+                    </label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        required
+                        minlength="3"
+                        maxlength="80"
+                        autocomplete="username"
+                        placeholder="Choose a username"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        maxlength="120"
+                        autocomplete="email"
+                        placeholder="you@example.com"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                        minlength="6"
+                        autocomplete="new-password"
+                        placeholder="Create a password"
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="auth-btn"
+                >
+                    Create Account
+                </button>
+
+            </form>
+
+
+            <!-- =========================
+                 Login Link
+            ========================== -->
+
+            <p class="auth-footer">
+
+                Already have an account?
+
+                <a href="{{ url_for('login') }}">
+                    Log in
+                </a>
+
+            </p>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

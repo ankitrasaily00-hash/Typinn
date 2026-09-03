@@ -1,0 +1,670 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Dashboard — Typinn
+{% endblock %}
+
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- =================================================
+         DASHBOARD HEADER
+    ================================================== -->
+
+    <section class="dashboard-header">
+
+        <div>
+
+            <span class="eyebrow">
+                YOUR WORKSPACE
+            </span>
+
+            <h1>
+                Welcome back, {{ user.username }}
+            </h1>
+
+            <p>
+                Track your progress, improve your speed,
+                and build your typing streak.
+            </p>
+
+        </div>
+
+        <a
+            href="{{ url_for('home') }}"
+            class="start-test-btn"
+        >
+            Start Test →
+        </a>
+
+    </section>
+
+
+    <!-- =================================================
+         LEVEL + STREAK
+    ================================================== -->
+
+    <section class="gamification">
+
+        <!-- LEVEL CARD -->
+
+        <div class="level-card">
+
+            <div class="level-top">
+
+                <div class="level-info">
+
+                    <span>
+                        CURRENT LEVEL
+                    </span>
+
+                    <strong>
+                        {{ level }}
+                    </strong>
+
+                </div>
+
+                <div class="xp-value">
+                    {{ xp }} XP
+                </div>
+
+            </div>
+
+
+            <div class="xp-bar">
+
+                <div
+                    class="xp-progress"
+                    style="width: {{ level_xp }}%;"
+                ></div>
+
+            </div>
+
+
+            <div class="xp-footer">
+
+                <span>
+                    {{ level_xp }} / 100 XP
+                </span>
+
+                <span>
+                    {{ xp_to_next }} XP to Level {{ level + 1 }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- STREAK CARD -->
+
+        <div class="streak-card">
+
+            <div class="streak-icon">
+                🔥
+            </div>
+
+            <div>
+
+                <span>
+                    DAILY STREAK
+                </span>
+
+                <strong>
+                    {{ streak }}
+                    <small>days</small>
+                </strong>
+
+            </div>
+
+
+            <p>
+
+                {% if streak == 0 %}
+                    Start practicing today.
+                {% elif streak == 1 %}
+                    Keep your momentum going!
+                {% elif streak < 7 %}
+                    You're building a strong habit.
+                {% else %}
+                    Incredible consistency!
+                {% endif %}
+
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         MAIN STATISTICS
+    ================================================== -->
+
+    <section
+        class="dashboard-stats"
+        aria-label="Typing statistics"
+    >
+
+        <div class="dashboard-card highlight">
+
+            <span>
+                BEST WPM
+            </span>
+
+            <strong>
+                {{ best_wpm }}
+            </strong>
+
+            <small>
+                Personal record
+            </small>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <span>
+                AVERAGE WPM
+            </span>
+
+            <strong>
+                {{ average_wpm }}
+            </strong>
+
+            <small>
+                Across all tests
+            </small>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <span>
+                LATEST WPM
+            </span>
+
+            <strong>
+                {{ latest_wpm }}
+            </strong>
+
+            <small>
+                Most recent test
+            </small>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <span>
+                ACCURACY
+            </span>
+
+            <strong>
+                {{ average_accuracy }}%
+            </strong>
+
+            <small>
+                Average accuracy
+            </small>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <span>
+                TESTS
+            </span>
+
+            <strong>
+                {{ total_tests }}
+            </strong>
+
+            <small>
+                Tests completed
+            </small>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <span>
+                CHARACTERS
+            </span>
+
+            <strong>
+                {{ total_characters }}
+            </strong>
+
+            <small>
+                Characters typed
+            </small>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <span>
+                PRACTICE TIME
+            </span>
+
+            <strong>
+
+                {% if total_time >= 3600 %}
+
+                    {{ total_time // 3600 }}h
+
+                    {% if (total_time % 3600) // 60 %}
+                        {{ (total_time % 3600) // 60 }}m
+                    {% endif %}
+
+                {% elif total_time >= 60 %}
+
+                    {{ total_time // 60 }}m
+
+                    {% if total_time % 60 %}
+                        {{ total_time % 60 }}s
+                    {% endif %}
+
+                {% else %}
+
+                    {{ total_time }}s
+
+                {% endif %}
+
+            </strong>
+
+            <small>
+                Total practice
+            </small>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         PERFORMANCE
+    ================================================== -->
+
+    <section class="performance-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <span class="eyebrow">
+                    PERFORMANCE
+                </span>
+
+                <h2>
+                    Your typing speed
+                </h2>
+
+                <p>
+                    WPM from your 10 most recent tests.
+                </p>
+
+            </div>
+
+            {% if results %}
+
+                <div class="section-stat">
+
+                    <strong>
+                        {{ best_wpm }}
+                    </strong>
+
+                    <span>
+                        BEST WPM
+                    </span>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <div
+            class="performance-chart"
+            aria-label="Recent typing performance"
+        >
+
+            {% if results %}
+
+                {% for result in results[:10]|reverse %}
+
+                    <div class="chart-column">
+
+                        <div class="chart-value">
+                            {{ result.wpm }}
+                        </div>
+
+                        <div
+                            class="chart-bar"
+                            style="height: {{ [result.wpm * 2, 20]|max }}px;"
+                            title="{{ result.wpm }} WPM"
+                            aria-label="{{ result.wpm }} WPM"
+                        ></div>
+
+                        <span>
+                            {{ loop.index }}
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="chart-empty">
+
+                    <div class="empty-icon">
+                        📊
+                    </div>
+
+                    <strong>
+                        No performance data yet
+                    </strong>
+
+                    <p>
+                        Complete your first typing test
+                        to start tracking your progress.
+                    </p>
+
+                    <a
+                        href="{{ url_for('home') }}"
+                        class="start-test-btn"
+                    >
+                        Take First Test →
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         ACHIEVEMENTS
+    ================================================== -->
+
+    <section class="achievements">
+
+        <div class="section-header">
+
+            <div>
+
+                <span class="eyebrow">
+                    MILESTONES
+                </span>
+
+                <h2>
+                    Achievements
+                </h2>
+
+                <p>
+                    Keep practicing to unlock every milestone.
+                </p>
+
+            </div>
+
+            <div class="achievement-count">
+
+                {{ achievement_ids|length }}
+                /
+                {{ achievements|length }}
+
+                <span>
+                    unlocked
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="achievement-grid">
+
+            {% for achievement in achievements %}
+
+                {% set unlocked =
+                    achievement.id in achievement_ids
+                %}
+
+
+                <div
+                    class="
+                        achievement-card
+                        {% if unlocked %}
+                            achievement-unlocked
+                        {% else %}
+                            locked
+                        {% endif %}
+                    "
+                >
+
+                    <div
+                        class="achievement-icon"
+                        aria-hidden="true"
+                    >
+                        {{ achievement.icon }}
+                    </div>
+
+
+                    <div class="achievement-info">
+
+                        <strong>
+                            {{ achievement.name }}
+                        </strong>
+
+                        <p>
+                            {{ achievement.description }}
+                        </p>
+
+
+                        {% if unlocked %}
+
+                            <span
+                                class="
+                                    achievement-status
+                                    unlocked-status
+                                "
+                            >
+                                ✓ Unlocked
+                            </span>
+
+                        {% else %}
+
+                            <span
+                                class="
+                                    achievement-status
+                                    locked-status
+                                "
+                            >
+                                🔒 Locked
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-history">
+
+                    <p>
+                        No achievements available yet.
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         TYPING HISTORY
+    ================================================== -->
+
+    <section class="history">
+
+        <div class="history-header">
+
+            <div>
+
+                <span class="eyebrow">
+                    ACTIVITY
+                </span>
+
+                <h2>
+                    Typing History
+                </h2>
+
+                <p>
+                    Your 20 most recent typing tests.
+                </p>
+
+            </div>
+
+            {% if results %}
+
+                <span class="history-count">
+                    {{ total_tests }} total tests
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        {% if results %}
+
+            <div class="history-table">
+
+                <div class="history-row history-head">
+
+                    <span>
+                        Date
+                    </span>
+
+                    <span>
+                        WPM
+                    </span>
+
+                    <span>
+                        Accuracy
+                    </span>
+
+                    <span>
+                        Errors
+                    </span>
+
+                    <span>
+                        Duration
+                    </span>
+
+                </div>
+
+
+                {% for result in results[:20] %}
+
+                    <div class="history-row">
+
+                        <span class="history-date">
+
+                            {% if result.created_at %}
+
+                                {{ result.created_at.strftime("%b %d, %Y") }}
+
+                            {% else %}
+
+                                —
+
+                            {% endif %}
+
+                        </span>
+
+
+                        <strong class="history-wpm">
+                            {{ result.wpm }}
+                            <small>WPM</small>
+                        </strong>
+
+
+                        <span>
+
+                            <span class="accuracy-pill">
+                                {{ result.accuracy }}%
+                            </span>
+
+                        </span>
+
+
+                        <span>
+                            {{ result.errors }}
+                        </span>
+
+
+                        <span>
+                            {{ result.duration }}s
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <div class="empty-history">
+
+                <div class="empty-icon">
+                    ⌨️
+                </div>
+
+                <h3>
+                    Your typing history is empty
+                </h3>
+
+                <p>
+                    Complete a typing test and your
+                    results will appear here.
+                </p>
+
+                <a
+                    href="{{ url_for('home') }}"
+                    class="start-test-btn"
+                >
+                    Take Your First Test →
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+</div>
+
+{% endblock %}
